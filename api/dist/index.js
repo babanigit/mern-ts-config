@@ -108,7 +108,7 @@ app.use((error, req, res, next) => {
         errorMessage = error.message;
     }
     // console log
-    console.error("[bablu's error log] ", error);
+    console.error("[error log...] ", error);
     // default error response
     res
         .status(statusCode)

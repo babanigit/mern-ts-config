@@ -8,9 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLogOut = exports.getLogin = exports.getRegister = exports.getAuthUser = void 0;
-const console_1 = require("console");
+const http_errors_1 = __importDefault(require("http-errors"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const UserSchema_1 = __importDefault(require("../models/UserSchema"));
 const getAuthUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
     }
@@ -21,7 +26,25 @@ const getAuthUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.getAuthUser = getAuthUser;
 const getRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        throw console_1.error;
+        const { username, email, password } = yield req.body;
+        if (!username || !email || !password)
+            throw (0, http_errors_1.default)(400, "parameters missing");
+        const existingUserEmail = yield UserSchema_1.default.findOne({ email: email });
+        if (existingUserEmail)
+            throw (0, http_errors_1.default)(409, "email is already taken!");
+        // password hashing
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        const user = yield UserSchema_1.default.create({
+            username,
+            email,
+            password: hashedPassword,
+            // cPasswd: hashedPasswd,
+        });
+        res.status(201).json({
+            user,
+            success: true,
+            message: "User created successfully",
+        });
     }
     catch (error) {
         next(error);

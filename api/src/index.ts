@@ -99,7 +99,7 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     }
 
     // console log
-    console.error("[bablu's error log] ", error);
+    console.error("[error log...] ", error);
 
     // default error response
     res
