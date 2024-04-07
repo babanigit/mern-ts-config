@@ -35,6 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// imports
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const path_1 = __importDefault(require("path"));
@@ -43,6 +44,7 @@ const morgan_1 = __importDefault(require("morgan"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const http_errors_1 = __importStar(require("http-errors"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const UserRoutes_1 = __importDefault(require("./routers/UserRoutes"));
 dotenv_1.default.config({ path: "../.env" });
 const app = (0, express_1.default)();
 app.use((0, morgan_1.default)("dev"));
@@ -51,13 +53,14 @@ app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)());
 const port = process.env.PORT;
 const DB = process.env.DATABASE;
-const dirname = path_1.default.resolve();
-console.log("direname : ", dirname);
+// const dirname = path.resolve();
+// console.log("direname : ",dirname)
 const dirname2 = path_1.default.dirname(path_1.default.resolve());
 console.log("dirname2 : ", dirname2);
 // const parentDirname = path.dirname(dirname2);
 // const newPath = path.join(parentDirname, path.basename(dirname2));
 // console.log(newPath);
+// connection
 const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
     if (!DB) {
         throw new Error("Database connection string is not provided. -b");
@@ -72,11 +75,15 @@ const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 connectDb();
+// session
+// routes
+app.use("/api/users", UserRoutes_1.default);
 // use the frontend app
 app.use(express_1.default.static(path_1.default.join(dirname2, "/app/dist")));
 app.get('*', (req, res) => {
     res.sendFile(path_1.default.join(dirname2, '/app/dist/index.html'));
 });
+// default route
 app.get("/", (req, res, next) => {
     try {
         res.status(200).json({
@@ -92,15 +99,17 @@ app.get("/", (req, res, next) => {
 app.use((res, req, next) => {
     next((0, http_errors_1.default)(404, "endpoint not found"));
 });
+// error handling 
 app.use((error, req, res, next) => {
     let errorMessage = "an unknown error occurred(default non-httpError error)";
     let statusCode = 500;
-    // if (error instanceof Error) errorMessage = error.message;
     if ((0, http_errors_1.isHttpError)(error)) {
         statusCode = error.status;
         errorMessage = error.message;
     }
-    console.error("[console log error] ", error);
+    // console log
+    console.error("[bablu's error log] ", error);
+    // default error response
     res
         .status(statusCode)
         .json({
@@ -109,6 +118,7 @@ app.use((error, req, res, next) => {
         statusCode,
     });
 });
+// listing
 app.listen(port, () => {
     console.log(`[server]: hello, Server is running at http://localhost:${port}`);
 });
