@@ -52,6 +52,12 @@ app.use((0, cors_1.default)());
 const port = process.env.PORT;
 const DB = process.env.DATABASE;
 const dirname = path_1.default.resolve();
+console.log("direname : ", dirname);
+const dirname2 = path_1.default.dirname(path_1.default.resolve());
+console.log("dirname2 : ", dirname2);
+// const parentDirname = path.dirname(dirname2);
+// const newPath = path.join(parentDirname, path.basename(dirname2));
+// console.log(newPath);
 const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
     if (!DB) {
         throw new Error("Database connection string is not provided. -b");
@@ -66,6 +72,11 @@ const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 connectDb();
+// use the frontend app
+app.use(express_1.default.static(path_1.default.join(dirname2, "/app/dist")));
+app.get('*', (req, res) => {
+    res.sendFile(path_1.default.join(dirname2, '/app/dist/index.html'));
+});
 app.get("/", (req, res, next) => {
     try {
         res.status(200).json({

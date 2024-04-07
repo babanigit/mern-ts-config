@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npm run serve --prefix api"
+    "dev": "npm run serve --prefix ./api",
+    "build": "npm install --prefix ./app && npm run build --prefix ./app && npm install",
+    "start": "node api/dist/index.js"
+
   },
   "keywords": [],
   "author": "",

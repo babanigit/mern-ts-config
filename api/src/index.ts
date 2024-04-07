@@ -21,6 +21,14 @@ app.use(cors());
 const port = process.env.PORT;
 const DB = process.env.DATABASE;
 const dirname = path.resolve();
+console.log("direname : ",dirname)
+
+
+const dirname2 = path.dirname(path.resolve());
+console.log("dirname2 : ", dirname2)
+// const parentDirname = path.dirname(dirname2);
+// const newPath = path.join(parentDirname, path.basename(dirname2));
+// console.log(newPath);
 
 const connectDb = async (): Promise<void> => {
 
@@ -43,6 +51,13 @@ const connectDb = async (): Promise<void> => {
 
 };
 connectDb();
+
+
+// use the frontend app
+app.use(express.static(path.join(dirname2, "/app/dist")));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(dirname2, '/app/dist/index.html'));
+});
 
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
