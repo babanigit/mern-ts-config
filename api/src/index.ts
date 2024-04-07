@@ -90,6 +90,8 @@ app.use((res, req, next) => {
 
 // error handling 
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+
+    // default res
     let errorMessage = "an unknown error occurred(default non-httpError error)";
     let statusCode = 500;
 
@@ -101,7 +103,7 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     // console log
     console.error("[error log...] ", error);
 
-    // default error response
+    // error response
     res
         .status(statusCode)
         .json({

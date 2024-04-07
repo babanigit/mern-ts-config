@@ -9,7 +9,7 @@ import UserModel from "../models/UserSchema";
 
 export const getAuthUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-    
+
 
     } catch (error) {
         next(error)
@@ -50,6 +50,24 @@ export const getRegister = async (req: Request, res: Response, next: NextFunctio
 
 export const getLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        const { username, password } = await req.body;
+        if (!username || !password) throw createHttpError(400, "Parameters missing")
+
+        const user = await UserModel.findOne({ username: username }).select("+password +email").exec();
+        if (!user) throw createHttpError(401, "invalid credentials(u)")
+
+        if (typeof password !== 'string' || typeof user.password !== 'string') throw new Error("Password or user password is not a string");
+
+        const passwdMatch = await bcrypt.compare(password, user.password);
+        if (!passwdMatch) throw createHttpError(401, "invalid credentials(p)")
+
+
+        res.status(201).json({
+            user,
+            success: true,
+            message: "User logged in",
+        });
+
 
     } catch (error) {
         next(error)

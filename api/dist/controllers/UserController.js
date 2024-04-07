@@ -53,6 +53,22 @@ const getRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.getRegister = getRegister;
 const getLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { username, password } = yield req.body;
+        if (!username || !password)
+            throw (0, http_errors_1.default)(400, "Parameters missing");
+        const user = yield UserSchema_1.default.findOne({ username: username }).select("+password +email").exec();
+        if (!user)
+            throw (0, http_errors_1.default)(401, "invalid credentials(u)");
+        if (typeof password !== 'string' || typeof user.password !== 'string')
+            throw new Error("Password or user password is not a string");
+        const passwdMatch = yield bcrypt_1.default.compare(password, user.password);
+        if (!passwdMatch)
+            throw (0, http_errors_1.default)(401, "invalid credentials(p)");
+        res.status(201).json({
+            user,
+            success: true,
+            message: "User logged in",
+        });
     }
     catch (error) {
         next(error);
