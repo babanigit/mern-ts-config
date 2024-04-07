@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npm run serve --prefix ./api",
     "build": "npm install --prefix ./app && npm run build --prefix ./app && npm install",
+    "build2":" npm run build --prefix app",
     "start": "node api/dist/index.js"
 
   },

@@ -30,6 +30,7 @@ console.log("dirname2 : ", dirname2)
 // const newPath = path.join(parentDirname, path.basename(dirname2));
 // console.log(newPath);
 
+
 const connectDb = async (): Promise<void> => {
 
     if (!DB) {
