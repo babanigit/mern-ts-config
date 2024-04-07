@@ -1,0 +1,23 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf dist && npx tsc",
+    "prestart": "npm run build",
+    "start": "node dist/index.js",
+    "preserve": "npm run build",
+    "serve": "concurrently \" npx tsc -w\" \" nodemon dist/index.js \" ",
+    "cc": " "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0",
+    "rimraf": "^5.0.5"
+  }
+}
