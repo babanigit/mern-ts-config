@@ -41,10 +41,13 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
+const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const express_session_1 = __importDefault(require("express-session"));
 const http_errors_1 = __importStar(require("http-errors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const UserRoutes_1 = __importDefault(require("./routers/UserRoutes"));
+const NoteRoutes_1 = __importDefault(require("./routers/NoteRoutes"));
 dotenv_1.default.config({ path: "../.env" });
 const app = (0, express_1.default)();
 app.use((0, morgan_1.default)("dev"));
@@ -53,13 +56,11 @@ app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)());
 const port = process.env.PORT;
 const DB = process.env.DATABASE;
-// const dirname = path.resolve();
-// console.log("direname : ",dirname)
-const dirname2 = path_1.default.dirname(path_1.default.resolve());
-console.log("dirname2 : ", dirname2);
-// const parentDirname = path.dirname(dirname2);
-// const newPath = path.join(parentDirname, path.basename(dirname2));
-// console.log(newPath);
+const directory = path_1.default.dirname(path_1.default.resolve());
+const corsOptions = {
+    origin: "http://localhost:5173", // frontend URI (ReactJS)
+    credentials: true // Allows session cookies to be sent from frontend to backend 
+};
 // connection
 const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
     if (!DB) {
@@ -76,12 +77,33 @@ const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 connectDb();
 // session
+// we initialize the session method before routes so that all routes can access the session functions
+app.use((0, express_session_1.default)({
+    secret: process.env.SECRET_WORD,
+    resave: false,
+    saveUninitialized: false,
+    proxy: true, // Required for Heroku & Digital Ocean (regarding X-Forwarded-For)
+    name: 'hellosessionbroo', // This needs to be unique per-host.
+    cookie: {
+        // secure: true, // required for cookies to work on HTTPS
+        httpOnly: false,
+        sameSite: 'none',
+        maxAge: 60 * 60 * 1000,
+    },
+    rolling: true,
+    store: connect_mongo_1.default.create({
+        mongoUrl: process.env.DATABASE
+    })
+}));
+// cors
+app.use((0, cors_1.default)(corsOptions));
 // routes
 app.use("/api/users", UserRoutes_1.default);
+app.use("/api/notes", NoteRoutes_1.default);
 // use the frontend app
-app.use(express_1.default.static(path_1.default.join(dirname2, "/app/dist")));
+app.use(express_1.default.static(path_1.default.join(directory, "/app/dist")));
 app.get('*', (req, res) => {
-    res.sendFile(path_1.default.join(dirname2, '/app/dist/index.html'));
+    res.sendFile(path_1.default.join(directory, '/app/dist/index.html'));
 });
 // default route
 app.get("/", (req, res, next) => {

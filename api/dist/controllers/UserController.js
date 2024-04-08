@@ -64,6 +64,7 @@ const getLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         const passwdMatch = yield bcrypt_1.default.compare(password, user.password);
         if (!passwdMatch)
             throw (0, http_errors_1.default)(401, "invalid credentials(p)");
+        req.session.userId = user._id;
         res.status(201).json({
             user,
             success: true,
@@ -77,6 +78,15 @@ const getLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 exports.getLogin = getLogin;
 const getLogOut = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // will destroy the session here....
+        req.session.destroy(error => {
+            if (error) {
+                next(error);
+            }
+            else {
+                res.sendStatus(200);
+            }
+        });
     }
     catch (error) {
         next(error);

@@ -11,6 +11,7 @@ import createHttpError, { isHttpError } from "http-errors";
 import dotenv from "dotenv";
 
 import userRoute from "./routers/UserRoutes"
+import noteRoute from "./routers/NoteRoutes"
 
 dotenv.config({ path: "../.env" });
 
@@ -22,17 +23,11 @@ app.use(cors());
 
 const port = process.env.PORT;
 const DB = process.env.DATABASE;
-
-// const dirname = path.resolve();
-// console.log("direname : ",dirname)
-
-
-const dirname2 = path.dirname(path.resolve());
-console.log("dirname2 : ", dirname2)
-// const parentDirname = path.dirname(dirname2);
-// const newPath = path.join(parentDirname, path.basename(dirname2));
-// console.log(newPath);
-
+const directory = path.dirname(path.resolve());
+const corsOptions = {
+    origin: "http://localhost:5173", // frontend URI (ReactJS)
+    credentials: true // Allows session cookies to be sent from frontend to backend 
+}
 
 // connection
 const connectDb = async (): Promise<void> => {
@@ -57,18 +52,44 @@ const connectDb = async (): Promise<void> => {
 };
 connectDb();
 
-
 // session
+// we initialize the session method before routes so that all routes can access the session functions
+app.use(session({
+    secret: process.env.SECRET_WORD!,
+    resave: false,
+    saveUninitialized: false,
+    proxy: true, // Required for Heroku & Digital Ocean (regarding X-Forwarded-For)
+    name: 'hellosessionbroo', // This needs to be unique per-host.
+
+    cookie: {
+        // secure: true, // required for cookies to work on HTTPS
+        httpOnly: false,
+        sameSite: 'none',
+
+        maxAge: 60 * 60 * 1000,
+    },
+    rolling: true,
+    store: MongoStore.create({
+        mongoUrl: process.env.DATABASE
+    })
+}));
+
+// cors
+app.use(cors(
+    corsOptions
+));
+
 
 // routes
 app.use("/api/users", userRoute)
+app.use("/api/notes", noteRoute)
 
 
 
 // use the frontend app
-app.use(express.static(path.join(dirname2, "/app/dist")));
+app.use(express.static(path.join(directory, "/app/dist")));
 app.get('*', (req, res) => {
-    res.sendFile(path.join(dirname2, '/app/dist/index.html'));
+    res.sendFile(path.join(directory, '/app/dist/index.html'));
 });
 
 // default route

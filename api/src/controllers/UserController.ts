@@ -48,6 +48,14 @@ export const getRegister = async (req: Request, res: Response, next: NextFunctio
     }
 }
 
+interface CustomSessionData {
+    userId: unknown; // Define the userId property
+}
+
+declare module 'express-session' {
+    interface SessionData extends CustomSessionData {}
+}
+
 export const getLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { username, password } = await req.body;
@@ -60,6 +68,9 @@ export const getLogin = async (req: Request, res: Response, next: NextFunction):
 
         const passwdMatch = await bcrypt.compare(password, user.password);
         if (!passwdMatch) throw createHttpError(401, "invalid credentials(p)")
+
+
+            req.session.userId = user._id;
 
 
         res.status(201).json({
@@ -77,6 +88,15 @@ export const getLogin = async (req: Request, res: Response, next: NextFunction):
 
 export const getLogOut = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+
+          // will destroy the session here....
+  req.session.destroy(error => {
+    if (error) {
+      next(error)
+    } else {
+      res.sendStatus(200);
+    }
+  })
 
     } catch (error) {
         next(error)
