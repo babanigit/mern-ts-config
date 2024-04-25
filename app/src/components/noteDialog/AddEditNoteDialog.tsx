@@ -1,4 +1,4 @@
-import { Modal, Form, ModalFooter, Button } from "react-bootstrap";
+import { Modal, Form, Button } from "react-bootstrap";
 import { NoteModel } from "../aModal/noteModal"
 import { useForm } from "react-hook-form";
 import { NoteInput } from "../aNetwork/note_api"
