@@ -20,13 +20,15 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const getAuthNotes = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const getAuthenticatedUserId = req.session.userId;
+        console.log("getAuthNotes :- ", getAuthenticatedUserId);
         (0, AssertDefine_1.assertIsDefine)(getAuthenticatedUserId);
         const notes = yield NoteSchema_1.default.find({ userId: getAuthenticatedUserId }).exec();
-        res.status(201).json({
-            notes,
-            success: true,
-            message: " all notes of authenticated user ",
-        });
+        // res.status(201).json({
+        //     notes,
+        //     success: true,
+        //     message: " all notes of authenticated user ",
+        // }); 
+        res.status(200).json(notes);
     }
     catch (error) {
         next(error);
@@ -46,11 +48,12 @@ const getNote = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         if (note && note.userId && !note.userId.equals(getAuthenticatedUserId)) {
             throw (0, http_errors_1.default)(401, "you cannot access this note");
         }
-        res.status(201).json({
-            note,
-            success: true,
-            message: " your note ",
-        });
+        // res.status(201).json({
+        //     note,
+        //     success: true,
+        //     message: " your note ",
+        // });
+        res.status(201).json(note);
     }
     catch (error) {
         next(error);

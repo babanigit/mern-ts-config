@@ -18,6 +18,12 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const UserSchema_1 = __importDefault(require("../models/UserSchema"));
 const getAuthUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const userId = req.session.userId; // Access the userId directly from req.session
+        console.log("session Id form getAuthUser ", userId);
+        console.log("session is ", req.session);
+        const user = yield UserSchema_1.default.findById(userId).select("+email").exec();
+        console.log("getAuth from userController ", user);
+        res.status(200).json(user);
     }
     catch (error) {
         next(error);
@@ -40,11 +46,12 @@ const getRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             password: hashedPassword,
             // cPasswd: hashedPasswd,
         });
-        res.status(201).json({
-            user,
-            success: true,
-            message: "User created successfully",
-        });
+        // res.status(201).json({
+        //     user,
+        //     success: true,
+        //     message: "User created successfully",
+        // });
+        res.status(200).json(user);
     }
     catch (error) {
         next(error);
@@ -65,11 +72,13 @@ const getLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         if (!passwdMatch)
             throw (0, http_errors_1.default)(401, "invalid credentials(p)");
         req.session.userId = user._id;
-        res.status(201).json({
-            user,
-            success: true,
-            message: "User logged in",
-        });
+        console.log("form getLogin", user._id);
+        // res.status(201).json({
+        //     user,
+        //     success: true,
+        //     message: "User logged in",
+        // });
+        res.status(200).json(user);
     }
     catch (error) {
         next(error);

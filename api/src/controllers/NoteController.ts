@@ -9,15 +9,20 @@ import mongoose, { ObjectId } from "mongoose";
 export const getAuthNotes = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const getAuthenticatedUserId = req.session.userId
+
+        console.log("getAuthNotes :- ", getAuthenticatedUserId)
+
         assertIsDefine(getAuthenticatedUserId);
 
         const notes= await NoteModel.find({userId: getAuthenticatedUserId}).exec();
 
-        res.status(201).json({
-            notes,
-            success: true,
-            message: " all notes of authenticated user ",
-        });
+        // res.status(201).json({
+        //     notes,
+        //     success: true,
+        //     message: " all notes of authenticated user ",
+        // }); 
+
+        res.status(200).json(notes);
 
     } catch (error) {
         next(error);
@@ -41,11 +46,13 @@ export const getNote = async (req: Request, res: Response, next: NextFunction) =
         if (note && note.userId && !note.userId.equals(getAuthenticatedUserId)) {
             throw createHttpError(401, "you cannot access this note")
         }
-        res.status(201).json({
-            note,
-            success: true,
-            message: " your note ",
-        });
+        // res.status(201).json({
+        //     note,
+        //     success: true,
+        //     message: " your note ",
+        // });
+
+        res.status(201).json(note)
 
 
     } catch (error) {

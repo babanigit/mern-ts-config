@@ -9,7 +9,16 @@ import UserModel from "../models/UserSchema";
 
 export const getAuthUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        const userId = req.session.userId; // Access the userId directly from req.session
 
+        console.log("session Id form getAuthUser ", userId);
+        console.log("session is ", req.session);
+
+        const user = await UserModel.findById(userId).select("+email").exec();
+
+        console.log("getAuth from userController ", user);
+
+        res.status(200).json(user);
 
     } catch (error) {
         next(error)
@@ -36,11 +45,13 @@ export const getRegister = async (req: Request, res: Response, next: NextFunctio
             // cPasswd: hashedPasswd,
         });
 
-        res.status(201).json({
-            user,
-            success: true,
-            message: "User created successfully",
-        });
+        // res.status(201).json({
+        //     user,
+        //     success: true,
+        //     message: "User created successfully",
+        // });
+
+        res.status(200).json(user);
 
 
     } catch (error) {
@@ -53,7 +64,7 @@ interface CustomSessionData {
 }
 
 declare module 'express-session' {
-    interface SessionData extends CustomSessionData {}
+    interface SessionData extends CustomSessionData { }
 }
 
 export const getLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -70,14 +81,18 @@ export const getLogin = async (req: Request, res: Response, next: NextFunction):
         if (!passwdMatch) throw createHttpError(401, "invalid credentials(p)")
 
 
-            req.session.userId = user._id;
+        req.session.userId = user._id;
+
+        console.log( "form getLogin" ,user._id)
 
 
-        res.status(201).json({
-            user,
-            success: true,
-            message: "User logged in",
-        });
+        // res.status(201).json({
+        //     user,
+        //     success: true,
+        //     message: "User logged in",
+        // });
+
+        res.status(200).json(user);
 
 
     } catch (error) {
@@ -89,14 +104,14 @@ export const getLogin = async (req: Request, res: Response, next: NextFunction):
 export const getLogOut = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
 
-          // will destroy the session here....
-  req.session.destroy(error => {
-    if (error) {
-      next(error)
-    } else {
-      res.sendStatus(200);
-    }
-  })
+        // will destroy the session here....
+        req.session.destroy(error => {
+            if (error) {
+                next(error)
+            } else {
+                res.sendStatus(200);
+            }
+        })
 
     } catch (error) {
         next(error)
