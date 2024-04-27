@@ -23,11 +23,9 @@ const app: Express = express();
 
 app.use(morgan("dev"));
 app.use(express.json());
-
 app.use(cookieParser());
-
 app.use(cors());
-
+app.enable('trust proxy')
 
 // const dirname = path.resolve();
 
@@ -35,11 +33,6 @@ const dirname = path.dirname(path.resolve());
 // const parentDirname = path.dirname(dirname);
 // const newPath = path.join(parentDirname, path.basename(dirname));
 // console.log(newPath);
-
-
-
-// app.set("trust proxy", 1); // trust first proxy
-app.enable('trust proxy')
 
 
 // we initialize the session method before routes so that all routes can access the session functions
@@ -73,32 +66,23 @@ app.use(session({
 //   ));
 
 
-
 // routes
-
 app.use("/api/users", userRouter)
 app.use("/api/notes",requiresAuth, noteRoutes);
 
 
-
-
-
-
-// // use the client app
-// app.use(express.static(path.join(dirname, "/client/build")));
-// console.log(dirname)
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(dirname, '/client/build/index.html'));
-// });
-
-
-
+// use the frontend app
+app.use(express.static(path.join(dirname, "/app/dist")));
+console.log(dirname)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(dirname, '/app/dist/index.html'));
+});
 
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   try {
     res.status(200).json({
-      message: "note-management api is live ",
+      message: "Note-Management api is live ",
       creator: "Aniket panchal (me)"
     });
   } catch (error) {
@@ -119,7 +103,7 @@ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
   console.error(error);
   let errorMessage = "an unknown error occurred";
   let statusCode = 500;
-  // if (error instanceof Error) errorMessage = error.message;
+
   if (isHttpError(error)) {
     statusCode = error.status;
     errorMessage = error.message;

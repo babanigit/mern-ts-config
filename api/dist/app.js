@@ -44,13 +44,12 @@ app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)());
+app.enable('trust proxy');
 // const dirname = path.resolve();
 const dirname = path_1.default.dirname(path_1.default.resolve());
 // const parentDirname = path.dirname(dirname);
 // const newPath = path.join(parentDirname, path.basename(dirname));
 // console.log(newPath);
-// app.set("trust proxy", 1); // trust first proxy
-app.enable('trust proxy');
 // we initialize the session method before routes so that all routes can access the session functions
 app.use((0, express_session_1.default)({
     secret: process.env.SECRET_WORD,
@@ -79,16 +78,16 @@ app.use((0, express_session_1.default)({
 // routes
 app.use("/api/users", userRoutes_1.default);
 app.use("/api/notes", auth_1.requiresAuth, noteRoutes_1.default);
-// // use the client app
-// app.use(express.static(path.join(dirname, "/client/build")));
-// console.log(dirname)
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(dirname, '/client/build/index.html'));
-// });
+// use the frontend app
+app.use(express_1.default.static(path_1.default.join(dirname, "/app/dist")));
+console.log(dirname);
+app.get('*', (req, res) => {
+    res.sendFile(path_1.default.join(dirname, '/app/dist/index.html'));
+});
 app.get("/", (req, res, next) => {
     try {
         res.status(200).json({
-            message: "note-management api is live ",
+            message: "Note-Management api is live ",
             creator: "Aniket panchal (me)"
         });
     }
@@ -106,7 +105,6 @@ app.use((error, req, res, next) => {
     console.error(error);
     let errorMessage = "an unknown error occurred";
     let statusCode = 500;
-    // if (error instanceof Error) errorMessage = error.message;
     if ((0, http_errors_1.isHttpError)(error)) {
         statusCode = error.status;
         errorMessage = error.message;

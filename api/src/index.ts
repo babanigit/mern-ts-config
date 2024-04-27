@@ -1,11 +1,5 @@
 import mongoose from "mongoose";
 import app from "./app"
-import cors from "cors";
-
-
-
-
-
 
 const port = process.env.PORT;
 
@@ -31,7 +25,6 @@ const connectDb = async (): Promise<void> => {
 
 };
 connectDb();
-
 
 app.listen(port, () => {
   console.log(
