@@ -24,7 +24,7 @@ const NavBar = ({ loggedInUser, onLoginClicked, onLogoutSuccessful, onRegisterCl
                             note app
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="main-navbar" />
-                    <Navbar.Collapse id="main-navbar" >
+                    <Navbar.Collapse role={""} id="main-navbar" >
                         <Nav >
                             <Nav.Link as={Link} to="/privacy" >
                                 Privacy
