@@ -68,7 +68,7 @@ const LogModal = ({ onDismiss, onLoginSuccessful }: LoginModelProps) => {
 
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <TextInputField
-                            name="username"
+                            name="userName"
                             label="Username"
                             type="text"
                             placeholder="Username"
@@ -77,7 +77,7 @@ const LogModal = ({ onDismiss, onLoginSuccessful }: LoginModelProps) => {
                             error={errors.userName}
                         />
                         <TextInputField
-                            name="password"
+                            name="passwd"
                             label="Password"
                             type="password"
                             placeholder="Password"

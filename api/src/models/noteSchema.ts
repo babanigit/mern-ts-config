@@ -12,6 +12,15 @@ const noteSchema = new mongoose.Schema({
     text: {
         type: String,
     },
+    // passwd:{
+    //     type:String,
+    //     require:true
+    // },
+
+    // cPasswd:{
+    //     type:String,
+    //     require:true
+    // },
 
 }, {
     timestamps: true,
@@ -20,6 +29,6 @@ const noteSchema = new mongoose.Schema({
 type Note = InferSchemaType<typeof noteSchema>;
 
 
-const NoteModel = mongoose.model<Note>("notesData", noteSchema);
+const User = mongoose.model<Note>("notesData", noteSchema);
 
-export default NoteModel;
+export default User;

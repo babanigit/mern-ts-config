@@ -9,7 +9,6 @@
     "build": "npm install --prefix ./app && npm run build --prefix ./app && npm install",
     "build2":" npm run build --prefix ./app",
     "start": "npm start --prefix api"
-
   },
   "keywords": [],
   "author": "",

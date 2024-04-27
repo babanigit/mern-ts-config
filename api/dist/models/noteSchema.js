@@ -36,8 +36,16 @@ const noteSchema = new mongoose_1.default.Schema({
     text: {
         type: String,
     },
+    // passwd:{
+    //     type:String,
+    //     require:true
+    // },
+    // cPasswd:{
+    //     type:String,
+    //     require:true
+    // },
 }, {
     timestamps: true,
 });
-const NoteModel = mongoose_1.default.model("notesData", noteSchema);
-exports.default = NoteModel;
+const User = mongoose_1.default.model("notesData", noteSchema);
+exports.default = User;

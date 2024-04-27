@@ -9,9 +9,7 @@
     "prestart": "npm run build",
     "start": "node dist/index.js",
     "preserve": "npm run build",
-    "serve": "concurrently \" npx tsc -w\" \" nodemon dist/index.js \" ",
-    "build3": "npm install --prefix ./app && npm run build --prefix ./app && npm install",
-    "cc": " "
+    "serve": "concurrently \" npx tsc -w\" \" nodemon dist/index.js \" "
   },
   "keywords": [],
   "author": "",
