@@ -27,7 +27,8 @@ const getNotes = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         // Type assertion to JwtPayload (haven't used yet)
         const decoded = jsonwebtoken_1.default.verify(getCookieAuth, process.env.SECRET_WORD);
         console.log("decoded : ", decoded);
-        const notes = yield noteSchema_1.default.find({ userId: getAuthenticatedUserId }).exec();
+        console.log(decoded.id);
+        const notes = yield noteSchema_1.default.find({ userId: decoded.id }).exec();
         res.status(200).json(notes);
     }
     catch (error) {

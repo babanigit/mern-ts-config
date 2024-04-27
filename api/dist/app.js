@@ -37,8 +37,8 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ path: "../.env" });
 const noteRoutes_1 = __importDefault(require("./dRoutes/noteRoutes"));
 const userRoutes_1 = __importDefault(require("./dRoutes/userRoutes"));
-const verifySessionCookie_1 = require("./middleware/verifySessionCookie");
 const path_1 = __importDefault(require("path"));
+const verifyJwtCookie_1 = require("./middleware/verifyJwtCookie");
 const app = (0, express_1.default)();
 app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.json());
@@ -77,7 +77,7 @@ app.use((0, express_session_1.default)({
 //   ));
 // routes
 app.use("/api/users", userRoutes_1.default);
-app.use("/api/notes", verifySessionCookie_1.VerifySession, noteRoutes_1.default);
+app.use("/api/notes", verifyJwtCookie_1.verifyToken, noteRoutes_1.default);
 // use the frontend app
 app.use(express_1.default.static(path_1.default.join(dirname, "/app/dist")));
 console.log(dirname);

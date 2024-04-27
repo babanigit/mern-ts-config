@@ -20,7 +20,7 @@ export const verifyToken = (req: AuthenticatedRequest, res: Response, next: Next
   try {
     const token = req.cookies.access_token;
 
-    if (!token) throw createHttpError(401, "you are not authenticated! ");
+    if (!token) throw createHttpError(401, "you are not authenticated! jwt token ");
 
     if (!process.env.SECRET_WORD) {
       throw createHttpError(404, " Access token secret not found or undefined (VU)");

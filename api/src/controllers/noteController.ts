@@ -27,8 +27,9 @@ export const getNotes = async (req: Request, res: Response, next: NextFunction) 
     // Type assertion to JwtPayload (haven't used yet)
     const decoded = jwt.verify(getCookieAuth, process.env.SECRET_WORD!) as JwtPayload;
     console.log("decoded : ", decoded);
+    console.log(decoded.id)
 
-    const notes = await NoteModel.find({ userId: getAuthenticatedUserId }).exec();
+    const notes = await NoteModel.find({ userId: decoded.id }).exec();
     res.status(200).json(notes);
 
   } catch (error) {
@@ -60,7 +61,6 @@ export const getNote = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 
-
 export const createNotes: RequestHandler<unknown, unknown, CreateNoteBody, unknown> = async (req, res, next) => {
 
   const { title, text }: CreateNoteBody = req.body;
@@ -83,7 +83,6 @@ export const createNotes: RequestHandler<unknown, unknown, CreateNoteBody, unkno
   }
 }
 
-
 export const updateNote: RequestHandler = async (req, res, next) => {
   const noteId = req.params.noteId;
   const newTitle = req.body.title;
@@ -105,7 +104,6 @@ export const updateNote: RequestHandler = async (req, res, next) => {
     if (note && note.userId && !note.userId.equals(getAuthenticatedUserId)) {
       throw createHttpError(401, "you cannot access this note")
     }
-
 
     note.title = newTitle;
     note.text = newText;

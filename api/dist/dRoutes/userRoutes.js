@@ -6,10 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const userController_1 = require("../controllers/userController");
-const verifySessionCookie_1 = require("../middleware/verifySessionCookie");
+const verifyJwtCookie_1 = require("../middleware/verifyJwtCookie");
 // /api/users
 // authenticate
-router.get("/", verifySessionCookie_1.VerifySession, userController_1.getAuthenticatedUser);
+router.get("/", verifyJwtCookie_1.verifyToken, userController_1.getAuthenticatedUser);
 // Registration
 router.route("/register").post(userController_1.getRegister);
 // login

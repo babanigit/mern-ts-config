@@ -17,6 +17,7 @@ import userRouter from "./dRoutes/userRoutes";
 import { VerifySession } from "./middleware/verifySessionCookie";
 
 import path from 'path';
+import  { verifyToken } from "./middleware/verifyJwtCookie";
 
 
 const app: Express = express();
@@ -68,7 +69,7 @@ app.use(session({
 
 // routes
 app.use("/api/users", userRouter)
-app.use("/api/notes",VerifySession, noteRoutes);
+app.use("/api/notes", verifyToken, noteRoutes);
 
 
 // use the frontend app

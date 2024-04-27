@@ -10,7 +10,7 @@ const verifyToken = (req, res, next) => {
     try {
         const token = req.cookies.access_token;
         if (!token)
-            throw (0, http_errors_1.default)(401, "you are not authenticated! ");
+            throw (0, http_errors_1.default)(401, "you are not authenticated! jwt token ");
         if (!process.env.SECRET_WORD) {
             throw (0, http_errors_1.default)(404, " Access token secret not found or undefined (VU)");
         }
