@@ -22,9 +22,9 @@ const getNotes = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     try {
         const getAuthenticatedUserId = req.session.userId;
         const getCookieAuth = req.cookies.access_token;
-        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
+        // assertIsDefine("session", getAuthenticatedUserId);
         (0, assertIsDefine_1.assertIsDefine)("cookie", getCookieAuth);
-        // Type assertion to JwtPayload
+        // Type assertion to JwtPayload (haven't used yet)
         const decoded = jsonwebtoken_1.default.verify(getCookieAuth, process.env.SECRET_WORD);
         console.log("decoded : ", decoded);
         const notes = yield noteSchema_1.default.find({ userId: getAuthenticatedUserId }).exec();

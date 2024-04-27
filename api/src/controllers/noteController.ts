@@ -21,10 +21,10 @@ export const getNotes = async (req: Request, res: Response, next: NextFunction) 
     const getAuthenticatedUserId = req.session.userId
     const getCookieAuth = req.cookies.access_token
 
-    assertIsDefine("session", getAuthenticatedUserId);
+    // assertIsDefine("session", getAuthenticatedUserId);
     assertIsDefine("cookie", getCookieAuth);
 
-    // Type assertion to JwtPayload
+    // Type assertion to JwtPayload (haven't used yet)
     const decoded = jwt.verify(getCookieAuth, process.env.SECRET_WORD!) as JwtPayload;
     console.log("decoded : ", decoded);
 
