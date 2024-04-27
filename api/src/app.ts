@@ -14,7 +14,7 @@ dotenv.config({ path: "../.env" });
 
 import noteRoutes from "./dRoutes/noteRoutes";
 import userRouter from "./dRoutes/userRoutes";
-import { requiresAuth } from "./middleware/auth";
+import { VerifySession } from "./middleware/verifySessionCookie";
 
 import path from 'path';
 
@@ -68,7 +68,7 @@ app.use(session({
 
 // routes
 app.use("/api/users", userRouter)
-app.use("/api/notes",requiresAuth, noteRoutes);
+app.use("/api/notes",VerifySession, noteRoutes);
 
 
 // use the frontend app

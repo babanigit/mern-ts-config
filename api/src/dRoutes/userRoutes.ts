@@ -7,11 +7,12 @@ import jwt from "jsonwebtoken";
 const router = express.Router();
 
 import {getAuthenticatedUser, getRegister, getLogin,getLogout } from "../controllers/userController";
-import { requiresAuth } from "../middleware/auth";
+import { VerifySession } from "../middleware/verifySessionCookie";
 
+// /api/users
 
 // authenticate
-router.get("/", requiresAuth, getAuthenticatedUser);
+router.get("/", VerifySession, getAuthenticatedUser);
 // Registration
 router.route("/register").post(getRegister)
 // login

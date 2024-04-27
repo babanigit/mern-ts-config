@@ -6,9 +6,18 @@ import User from "../models/userSchema";
 import bcrypt from "bcrypt";
 import { error } from "console";
 import createHttpError from "http-errors";
+
+import jwt from "jsonwebtoken"
+
 import { assertIsDefine } from "../utils/assertIsDefine";
 
-
+// Define your user interface if needed
+interface User extends Document {
+  _id: string;
+  userName: string;
+  email: string;
+  passwd: string;
+}
 
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
 
@@ -31,72 +40,48 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
   }
 }
 
-
-// interface User {
-//   _id: string;
-//   userName: string;
-//   email: string;
-//   passwd: string;
-//   cPasswd: string;
-//   createdAt: Date;
-//   updatedAt: Date;
-//   __v: number;
-// }
-
-
-
-// Define your user interface if needed
-interface User extends Document {
-  _id: string;
-  userName: string;
-  email: string;
-  passwd: string;
-}
-
-
-const getRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { userName, email, passwd } = await req.body;
-    if (!userName || !email || !passwd) {
-
+    if (!userName || !email || !passwd)
       throw createHttpError(400, "parameters missing");
 
-    }
+    const existingUserEmail = await User.findOne({ email: email });
+    if (existingUserEmail)
+      throw createHttpError(409, "email is already taken!")
 
-    else {
+    const existingUserUserName = await User.findOne({ userName: userName });
+    if (existingUserUserName)
+      throw createHttpError(409, "username is already taken!")
 
-      const existingUserEmail = await User.findOne({ email: email });
-      if (existingUserEmail) {
+    // password hashing
+    const hashedPasswd = await bcrypt.hash(passwd, 10);
 
-        throw createHttpError(409, "email is already taken!")
+    const user = await User.create({
+      userName,
+      email,
+      passwd: hashedPasswd,
+      // cPasswd: hashedPasswd,
+    });
 
-      }
+    console.log("registered user is:  ", user)
 
-      const existingUserUserName = await User.findOne({ userName: userName });
-      if (existingUserUserName) {
+    // generating token
+    const token = jwt.sign(
+      {
+        id: user!._id,
+        user: user,
+      },
+      process.env.SECRET_WORD!
+    );
 
-        throw createHttpError(409, "username is already taken!")
-      }
+    // we sending user._id to the session.userId and we are creating cookie of it
+    req.session.userId = user._id;
 
-      else {
-
-        // password hashing
-        const hashedPasswd = await bcrypt.hash(passwd, 10);
-
-        const user = await User.create({
-          userName,
-          email,
-          passwd: hashedPasswd,
-          // cPasswd: hashedPasswd,
-        });
-
-
-        // we sending user._id to the session.userId
-        req.session.userId = user._id;
-
-        res.status(200).json(user);
-      }
-    }
+    const expiryDate = new Date(Date.now() + 3600000); // 1 hour
+    res
+      .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
+      .status(200).json(user);
 
   } catch (error) {
     console.error(error);
@@ -104,50 +89,44 @@ const getRegister = async (req: Request, res: Response, next: NextFunction): Pro
   }
 };
 
-interface IUser {
-  passwd?: string;
-  userName?: string;
-}
-
-
-const getLogin = async (req: Request, res: Response, next: NextFunction) => {
-
+export const getLogin = async (req: Request, res: Response, next: NextFunction) => {
 
   const { userName, passwd } = await req.body;
 
   try {
-    if (!userName || !passwd) {
-
+    if (!userName || !passwd)
       throw createHttpError(400, "Parameters missing")
 
+    const user = await User.findOne({ userName: userName }).select("+passwd +email").exec();
 
-    } else {
-      const user = await User.findOne({ userName: userName }).select("+passwd +email").exec();
+    if (!user)
+      throw createHttpError(401, "invalid credentials")
 
-      if (!user) {
-        throw createHttpError(401, "invalid credentials")
-      }
+    if (typeof passwd !== 'string' || typeof user.passwd !== 'string')
+      throw new Error("Password or user password is not a string");
 
-      if (typeof passwd !== 'string' || typeof user.passwd !== 'string') {
-        throw new Error("Password or user password is not a string");
-      }
+    const passwdMatch = await bcrypt.compare(passwd, user.passwd);
 
-      console.log("user.pass", passwd, user.passwd)
+    if (!passwdMatch)
+      throw createHttpError(401, "invalid credentials")
 
-      const passwdMatch = await bcrypt.compare(passwd, user.passwd);
+    // generating token
+    const token = jwt.sign(
+      {
+        id: user!._id,
+        user: user,
+      },
+      process.env.SECRET_WORD!
+    );
 
-      if (!passwdMatch) {
-        throw createHttpError(401, "invalid credentials")
-      }
+    // we sending user._id to the session.userId
+    req.session.userId = user._id;
 
+    const expiryDate = new Date(Date.now() + 3600000); // 1 hour
+    res
+      .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
+      .status(200).json(user);
 
-      // we sending user._id to the session.userId
-      req.session.userId = user._id;
-
-      res.status(200).json(user);
-
-
-    }
   } catch (error) {
 
     next(error)
@@ -155,22 +134,18 @@ const getLogin = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-// logout
 export const getLogout: RequestHandler = (req, res, next) => {
 
   // will destroy the session here....
-  req.session.destroy(error => {
+  req.session.destroy((error:any) => {
     if (error) {
       next(error)
     } else {
-      res.sendStatus(200);
+      res
+      .clearCookie("access_token")
+      .status(200)
+      .json({ message: "User Logged out successfully" });
     }
   })
 }
 
-
-export {
-  getRegister,
-  getLogin,
-
-};

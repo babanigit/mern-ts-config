@@ -17,15 +17,18 @@ const noteSchema_1 = __importDefault(require("../models/noteSchema"));
 const http_errors_1 = __importDefault(require("http-errors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const assertIsDefine_1 = require("../utils/assertIsDefine");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const getNotes = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const getAuthenticatedUserId = req.session.userId;
-        (0, assertIsDefine_1.assertIsDefine)(getAuthenticatedUserId);
+        const getCookieAuth = req.cookies.access_token;
+        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
+        (0, assertIsDefine_1.assertIsDefine)("cookie", getCookieAuth);
+        // Type assertion to JwtPayload
+        const decoded = jsonwebtoken_1.default.verify(getCookieAuth, process.env.SECRET_WORD);
+        console.log("decoded : ", decoded);
         const notes = yield noteSchema_1.default.find({ userId: getAuthenticatedUserId }).exec();
         res.status(200).json(notes);
-        console.log("getNotes from noteController");
-        console.log("session is ", req.session);
-        console.log("session Id is ", getAuthenticatedUserId, notes);
     }
     catch (error) {
         next(error);
@@ -36,7 +39,7 @@ const getNote = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
     const noteId = req.params.noteId;
     const getAuthenticatedUserId = req.session.userId;
     try {
-        (0, assertIsDefine_1.assertIsDefine)(getAuthenticatedUserId);
+        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
         if (!mongoose_1.default.isValidObjectId(noteId))
             throw (0, http_errors_1.default)(400, "invalid note id");
         const newNotes = yield noteSchema_1.default.findById(noteId).exec();
@@ -56,7 +59,7 @@ const createNotes = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     const { title, text } = req.body;
     const getAuthenticatedUserId = req.session.userId;
     try {
-        (0, assertIsDefine_1.assertIsDefine)(getAuthenticatedUserId);
+        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
         console.log("create note session id", req.session.userId);
         if (!title)
             throw (0, http_errors_1.default)(400, "note must have a title");
@@ -78,7 +81,7 @@ const updateNote = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const newText = req.body.text;
     const getAuthenticatedUserId = req.session.userId;
     try {
-        (0, assertIsDefine_1.assertIsDefine)(getAuthenticatedUserId);
+        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
         if (!mongoose_1.default.isValidObjectId(noteId))
             throw (0, http_errors_1.default)(400, "invalid note id");
         if (!newTitle)
@@ -103,7 +106,7 @@ const deleteNote = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const noteId = req.params.noteId;
     const getAuthenticatedUserId = req.session.userId;
     try {
-        (0, assertIsDefine_1.assertIsDefine)(getAuthenticatedUserId);
+        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
         if (!mongoose_1.default.isValidObjectId(noteId))
             throw (0, http_errors_1.default)(400, "invalid note id");
         const note = yield noteSchema_1.default.findById(noteId).exec();

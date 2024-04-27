@@ -6,9 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const userController_1 = require("../controllers/userController");
-const auth_1 = require("../middleware/auth");
+const verifySessionCookie_1 = require("../middleware/verifySessionCookie");
+// /api/users
 // authenticate
-router.get("/", auth_1.requiresAuth, userController_1.getAuthenticatedUser);
+router.get("/", verifySessionCookie_1.VerifySession, userController_1.getAuthenticatedUser);
 // Registration
 router.route("/register").post(userController_1.getRegister);
 // login
