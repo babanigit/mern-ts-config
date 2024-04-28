@@ -17,16 +17,13 @@ import { JwtPayload } from "jsonwebtoken";
 export const getNotes = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
-
-    const getAuthenticatedUserId = req.session.userId
     const getCookieAuth = req.cookies.access_token
 
-    // assertIsDefine("session", getAuthenticatedUserId);
+    // assertIsDefine("cookie", decoded.id);
     assertIsDefine("cookie", getCookieAuth);
 
     // Type assertion to JwtPayload (haven't used yet)
     const decoded = jwt.verify(getCookieAuth, process.env.SECRET_WORD!) as JwtPayload;
-    console.log("decoded : ", decoded);
     console.log(decoded.id)
 
     const notes = await NoteModel.find({ userId: decoded.id }).exec();
@@ -39,18 +36,22 @@ export const getNotes = async (req: Request, res: Response, next: NextFunction) 
 }
 
 export const getNote = async (req: Request, res: Response, next: NextFunction) => {
-
-  const noteId = req.params.noteId;
-  const getAuthenticatedUserId = req.session.userId
-
   try {
-    assertIsDefine("session", getAuthenticatedUserId);
+    const noteId = req.params.noteId;
+    const getCookieAuth = req.cookies.access_token
+
+    assertIsDefine("cookie", getCookieAuth);
+
+    // Type assertion to JwtPayload (haven't used yet)
+    const decoded = jwt.verify(getCookieAuth, process.env.SECRET_WORD!) as JwtPayload;
+    console.log(decoded.id)
+
     if (!mongoose.isValidObjectId(noteId)) throw createHttpError(400, "invalid note id")
 
     const newNotes = await NoteModel.findById(noteId).exec();
     if (!newNotes) throw createHttpError(404, "note not found");
 
-    if (newNotes && newNotes.userId && !newNotes.userId.equals(getAuthenticatedUserId)) {
+    if (newNotes && newNotes.userId && !newNotes.userId.equals(decoded.id)) {
       throw createHttpError(401, "you cannot access this note")
     }
 
@@ -62,17 +63,19 @@ export const getNote = async (req: Request, res: Response, next: NextFunction) =
 }
 
 export const createNotes: RequestHandler<unknown, unknown, CreateNoteBody, unknown> = async (req, res, next) => {
-
-  const { title, text }: CreateNoteBody = req.body;
-  const getAuthenticatedUserId = req.session.userId
-
   try {
-    assertIsDefine("session", getAuthenticatedUserId);
-    console.log("create note session id", req.session.userId)
+    const { title, text }: CreateNoteBody = req.body;
+    const getCookieAuth = req.cookies.access_token
+
+    assertIsDefine("cookie", getCookieAuth);
+
+    // Type assertion to JwtPayload (haven't used yet)
+    const decoded = jwt.verify(getCookieAuth, process.env.SECRET_WORD!) as JwtPayload;
+    console.log(decoded.id)
 
     if (!title) throw createHttpError(400, "note must have a title")
     const newNotes = await NoteModel.create({
-      userId: getAuthenticatedUserId, //here we stored new property "userId" which has req.session.userId
+      userId: decoded.id, //here we stored new property "userId" which has req.cookie.userId
       title,
       text,
     })
@@ -84,15 +87,19 @@ export const createNotes: RequestHandler<unknown, unknown, CreateNoteBody, unkno
 }
 
 export const updateNote: RequestHandler = async (req, res, next) => {
-  const noteId = req.params.noteId;
-  const newTitle = req.body.title;
-  const newText = req.body.text;
-
-  const getAuthenticatedUserId = req.session.userId
-
   try {
+    const noteId = req.params.noteId;
+    const newTitle = req.body.title;
+    const newText = req.body.text;
+    const getCookieAuth = req.cookies.access_token
 
-    assertIsDefine("session", getAuthenticatedUserId);
+    assertIsDefine("cookie", getCookieAuth);
+
+    // Type assertion to JwtPayload (haven't used yet)
+    const decoded = jwt.verify(getCookieAuth, process.env.SECRET_WORD!) as JwtPayload;
+    console.log(decoded.id)
+
+    assertIsDefine("cookie", decoded.id);
 
     if (!mongoose.isValidObjectId(noteId)) throw createHttpError(400, "invalid note id")
     if (!newTitle) throw createHttpError(400, "note must have a title")
@@ -101,7 +108,7 @@ export const updateNote: RequestHandler = async (req, res, next) => {
 
     if (!note) throw createHttpError(404, "note not found");
 
-    if (note && note.userId && !note.userId.equals(getAuthenticatedUserId)) {
+    if (note && note.userId && !note.userId.equals(decoded.id)) {
       throw createHttpError(401, "you cannot access this note")
     }
 
@@ -117,20 +124,25 @@ export const updateNote: RequestHandler = async (req, res, next) => {
 }
 
 export const deleteNote: RequestHandler = async (req, res, next) => {
-
-  const noteId = req.params.noteId
-  const getAuthenticatedUserId = req.session.userId
-
   try {
+    const noteId = req.params.noteId
+    const getCookieAuth = req.cookies.access_token
 
-    assertIsDefine("session", getAuthenticatedUserId);
+    // assertIsDefine("cookie", decoded.id);
+    assertIsDefine("cookie", getCookieAuth);
+
+    // Type assertion to JwtPayload (haven't used yet)
+    const decoded = jwt.verify(getCookieAuth, process.env.SECRET_WORD!) as JwtPayload;
+    console.log(decoded.id)
+
+    assertIsDefine("cookie", decoded.id);
     if (!mongoose.isValidObjectId(noteId)) throw createHttpError(400, "invalid note id")
 
     const note = await NoteModel.findById(noteId).exec();
 
     if (!note) throw createHttpError(404, "note not found")
 
-    if (note && note.userId && !note.userId.equals(getAuthenticatedUserId)) {
+    if (note && note.userId && !note.userId.equals(decoded.id)) {
       throw createHttpError(401, "you cannot access this note")
     }
 

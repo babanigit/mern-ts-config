@@ -20,13 +20,11 @@ const assertIsDefine_1 = require("../utils/assertIsDefine");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const getNotes = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const getAuthenticatedUserId = req.session.userId;
         const getCookieAuth = req.cookies.access_token;
-        // assertIsDefine("session", getAuthenticatedUserId);
+        // assertIsDefine("cookie", decoded.id);
         (0, assertIsDefine_1.assertIsDefine)("cookie", getCookieAuth);
         // Type assertion to JwtPayload (haven't used yet)
         const decoded = jsonwebtoken_1.default.verify(getCookieAuth, process.env.SECRET_WORD);
-        console.log("decoded : ", decoded);
         console.log(decoded.id);
         const notes = yield noteSchema_1.default.find({ userId: decoded.id }).exec();
         res.status(200).json(notes);
@@ -37,16 +35,19 @@ const getNotes = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.getNotes = getNotes;
 const getNote = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const noteId = req.params.noteId;
-    const getAuthenticatedUserId = req.session.userId;
     try {
-        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
+        const noteId = req.params.noteId;
+        const getCookieAuth = req.cookies.access_token;
+        (0, assertIsDefine_1.assertIsDefine)("cookie", getCookieAuth);
+        // Type assertion to JwtPayload (haven't used yet)
+        const decoded = jsonwebtoken_1.default.verify(getCookieAuth, process.env.SECRET_WORD);
+        console.log(decoded.id);
         if (!mongoose_1.default.isValidObjectId(noteId))
             throw (0, http_errors_1.default)(400, "invalid note id");
         const newNotes = yield noteSchema_1.default.findById(noteId).exec();
         if (!newNotes)
             throw (0, http_errors_1.default)(404, "note not found");
-        if (newNotes && newNotes.userId && !newNotes.userId.equals(getAuthenticatedUserId)) {
+        if (newNotes && newNotes.userId && !newNotes.userId.equals(decoded.id)) {
             throw (0, http_errors_1.default)(401, "you cannot access this note");
         }
         res.status(201).json(newNotes);
@@ -57,15 +58,17 @@ const getNote = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.getNote = getNote;
 const createNotes = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, text } = req.body;
-    const getAuthenticatedUserId = req.session.userId;
     try {
-        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
-        console.log("create note session id", req.session.userId);
+        const { title, text } = req.body;
+        const getCookieAuth = req.cookies.access_token;
+        (0, assertIsDefine_1.assertIsDefine)("cookie", getCookieAuth);
+        // Type assertion to JwtPayload (haven't used yet)
+        const decoded = jsonwebtoken_1.default.verify(getCookieAuth, process.env.SECRET_WORD);
+        console.log(decoded.id);
         if (!title)
             throw (0, http_errors_1.default)(400, "note must have a title");
         const newNotes = yield noteSchema_1.default.create({
-            userId: getAuthenticatedUserId, //here we stored new property "userId" which has req.session.userId
+            userId: decoded.id, //here we stored new property "userId" which has req.cookie.userId
             title,
             text,
         });
@@ -77,12 +80,16 @@ const createNotes = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.createNotes = createNotes;
 const updateNote = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const noteId = req.params.noteId;
-    const newTitle = req.body.title;
-    const newText = req.body.text;
-    const getAuthenticatedUserId = req.session.userId;
     try {
-        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
+        const noteId = req.params.noteId;
+        const newTitle = req.body.title;
+        const newText = req.body.text;
+        const getCookieAuth = req.cookies.access_token;
+        (0, assertIsDefine_1.assertIsDefine)("cookie", getCookieAuth);
+        // Type assertion to JwtPayload (haven't used yet)
+        const decoded = jsonwebtoken_1.default.verify(getCookieAuth, process.env.SECRET_WORD);
+        console.log(decoded.id);
+        (0, assertIsDefine_1.assertIsDefine)("cookie", decoded.id);
         if (!mongoose_1.default.isValidObjectId(noteId))
             throw (0, http_errors_1.default)(400, "invalid note id");
         if (!newTitle)
@@ -90,7 +97,7 @@ const updateNote = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         const note = yield noteSchema_1.default.findById(noteId).exec();
         if (!note)
             throw (0, http_errors_1.default)(404, "note not found");
-        if (note && note.userId && !note.userId.equals(getAuthenticatedUserId)) {
+        if (note && note.userId && !note.userId.equals(decoded.id)) {
             throw (0, http_errors_1.default)(401, "you cannot access this note");
         }
         note.title = newTitle;
@@ -104,16 +111,21 @@ const updateNote = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.updateNote = updateNote;
 const deleteNote = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const noteId = req.params.noteId;
-    const getAuthenticatedUserId = req.session.userId;
     try {
-        (0, assertIsDefine_1.assertIsDefine)("session", getAuthenticatedUserId);
+        const noteId = req.params.noteId;
+        const getCookieAuth = req.cookies.access_token;
+        // assertIsDefine("cookie", decoded.id);
+        (0, assertIsDefine_1.assertIsDefine)("cookie", getCookieAuth);
+        // Type assertion to JwtPayload (haven't used yet)
+        const decoded = jsonwebtoken_1.default.verify(getCookieAuth, process.env.SECRET_WORD);
+        console.log(decoded.id);
+        (0, assertIsDefine_1.assertIsDefine)("cookie", decoded.id);
         if (!mongoose_1.default.isValidObjectId(noteId))
             throw (0, http_errors_1.default)(400, "invalid note id");
         const note = yield noteSchema_1.default.findById(noteId).exec();
         if (!note)
             throw (0, http_errors_1.default)(404, "note not found");
-        if (note && note.userId && !note.userId.equals(getAuthenticatedUserId)) {
+        if (note && note.userId && !note.userId.equals(decoded.id)) {
             throw (0, http_errors_1.default)(401, "you cannot access this note");
         }
         yield note.deleteOne({ _id: noteId });
