@@ -124,6 +124,7 @@ export const getLogin = async (req: Request, res: Response, next: NextFunction) 
     req.session.userId = user._id;
 
     const expiryDate = new Date(Date.now() + 3600000); // 1 hour
+    // const expiryDate = new Date(Date.now() + 30000); // 30 seconds
     res
       .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
       .status(200).json(user);

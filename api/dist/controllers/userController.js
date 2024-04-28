@@ -93,6 +93,7 @@ const getLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         // we sending user._id to the session.userId
         req.session.userId = user._id;
         const expiryDate = new Date(Date.now() + 3600000); // 1 hour
+        // const expiryDate = new Date(Date.now() + 30000); // 30 seconds
         res
             .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
             .status(200).json(user);

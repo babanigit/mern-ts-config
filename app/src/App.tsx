@@ -85,7 +85,7 @@ const App = () => {
 
       </Container>
 
-
+{/* show register  */}
       {showRegModel &&
         <RegModal
           onDismiss={() => setShowRegModel(false)}
@@ -95,6 +95,7 @@ const App = () => {
           }}
         />}
 
+{/* show login */}
       {showLogModel &&
         <LogModal
           onDismiss={() => setShowLogModel(false)}

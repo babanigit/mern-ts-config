@@ -13,7 +13,7 @@ import { NextFunction, Request, Response } from "express";
 
 // Define a new interface extending Request
 interface AuthenticatedRequest extends Request {
-    user?: any; // Define the user property
+  user?: any; // Define the user property
 }
 
 export const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {

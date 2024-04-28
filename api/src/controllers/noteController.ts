@@ -1,4 +1,4 @@
-import express, { Express, NextFunction, Request, RequestHandler, Response } from "express";
+import  { NextFunction, Request, RequestHandler, Response } from "express";
 
 import NoteModel from "../models/noteSchema"
 import createHttpError from "http-errors";
