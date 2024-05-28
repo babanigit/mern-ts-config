@@ -10,11 +10,15 @@ import { ConflictError, UnauthorizedError } from "../zErrors/http-errors";
 
 // const noteLink = "http://localhost:4000/api/notes/";
 // const noteLink = "https://note-management-thsi.onrender.com/api/notes/";
-const noteLink = "api/notes/";
+
+const noteLink = "https://typescript-mocha-phi.vercel.app/api/notes/";
+// const noteLink = "api/notes/";
 
 // const userLink = "http://localhost:4000/api/users/";
 // const userLink = "https://note-management-thsi.onrender.com/api/users/";
-const userLink = "api/users/";
+
+const userLink = "https://typescript-mocha-phi.vercel.app/api/users/";
+// const userLink = "api/users/";
 
 
 
