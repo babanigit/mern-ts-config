@@ -72,12 +72,12 @@ app.use("/api/users", userRouter)
 app.use("/api/notes", verifyToken, noteRoutes);
 
 
-// use the frontend app
-app.use(express.static(path.join(dirname, "/app/dist")));
-console.log(dirname)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(dirname, '/app/dist/index.html'));
-});
+// // use the frontend app
+// app.use(express.static(path.join(dirname, "/app/dist")));
+// console.log(dirname)
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(dirname, '/app/dist/index.html'));
+// });
 
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
