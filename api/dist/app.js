@@ -78,12 +78,12 @@ app.use((0, express_session_1.default)({
 // routes
 app.use("/api/users", userRoutes_1.default);
 app.use("/api/notes", verifyJwtCookie_1.verifyToken, noteRoutes_1.default);
-// // use the frontend app
-// app.use(express.static(path.join(dirname, "/app/dist")));
-// console.log(dirname)
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(dirname, '/app/dist/index.html'));
-// });
+// use the frontend app
+app.use(express_1.default.static(path_1.default.join(dirname, "/app/dist")));
+console.log(dirname);
+app.get('*', (req, res) => {
+    res.sendFile(path_1.default.join(dirname, '/app/dist/index.html'));
+});
 app.get("/", (req, res, next) => {
     try {
         res.status(200).json({
