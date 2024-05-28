@@ -13,8 +13,7 @@
   "keywords": [],
   "pre-commit": [
     "ts.check",
-    "build",
-    "add-build"
+    "build"
   ],
   "author": "",
   "license": "ISC",
