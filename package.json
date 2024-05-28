@@ -4,19 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npm run serve --prefix ./api",
-    "build": "npm install --prefix ./app && npm run build --prefix ./app && npm install",
-    "build2":" npm run build --prefix ./app",
-    "start": "nodemon api/dist/index.js",
-    "start2": "npm start --prefix ./api"
+    "start": "npm install --prefix ./api && npm start --prefix ./api",
+    "build": "npm run build --prefix ./api",
+    "ts.check": "npm run ts.check --prefix ./api",
+    "add-build": "npm add-build --prefix ./api",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "pre-commit": [
     "ts.check",
     "build",
     "add-build"
-],
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -32,6 +31,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.1",
     "morgan": "^1.10.0",
+    "pre-commit": "^1.2.2",
     "typescript": "^5.4.4"
   },
   "devDependencies": {
