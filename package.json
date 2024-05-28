@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm install --prefix ./api && npm start --prefix ./api",
+    "start": "npm start --prefix ./api",
     "build": "npm run build --prefix ./api",
     "ts.check": "npm run ts.check --prefix ./api",
     "add-build": "npm add-build --prefix ./api",
