@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importDefault(require("./app"));
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 const DB = process.env.DATABASE;
 const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
     if (!DB) {

@@ -30,8 +30,6 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const http_errors_1 = __importStar(require("http-errors"));
-const express_session_1 = __importDefault(require("express-session"));
-const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ path: "../.env" });
@@ -50,24 +48,24 @@ const dirname = path_1.default.dirname(path_1.default.resolve());
 // const parentDirname = path.dirname(dirname);
 // const newPath = path.join(parentDirname, path.basename(dirname));
 // console.log(newPath);
-// we initialize the session method before routes so that all routes can access the session functions
-app.use((0, express_session_1.default)({
-    secret: process.env.SECRET_WORD,
-    resave: false,
-    saveUninitialized: false,
-    proxy: true, // Required for Heroku & Digital Ocean (regarding X-Forwarded-For)
-    name: 'MyCoolWebAppCookieName', // This needs to be unique per-host.
-    cookie: {
-        // secure: true, // required for cookies to work on HTTPS
-        httpOnly: false,
-        sameSite: 'none',
-        maxAge: 60 * 60 * 1000,
-    },
-    rolling: true,
-    store: connect_mongo_1.default.create({
-        mongoUrl: process.env.DATABASE
-    })
-}));
+// // we initialize the session method before routes so that all routes can access the session functions
+// app.use(session({
+//   secret: process.env.SECRET_WORD!,
+//   resave: false,
+//   saveUninitialized: false,
+//   proxy: true, // Required for Heroku & Digital Ocean (regarding X-Forwarded-For)
+//   name: 'MyCoolWebAppCookieName', // This needs to be unique per-host.
+//   cookie: {
+//     // secure: true, // required for cookies to work on HTTPS
+//     httpOnly: false,
+//     sameSite: 'none',
+//     maxAge: 60 * 60 * 1000,
+//   },
+//   rolling: true,
+//   store: MongoStore.create({
+//     mongoUrl: process.env.DATABASE
+//   })
+// }));
 // const corsOptions = {
 //   origin: "https://note-management-ovgat0io2-aniket-panchals-projects.vercel.app", // frontend URI (ReactJS)
 //   credentials: true // Allows session cookies to be sent from frontend to backend 

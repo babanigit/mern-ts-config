@@ -36,26 +36,26 @@ const dirname = path.dirname(path.resolve());
 // console.log(newPath);
 
 
-// we initialize the session method before routes so that all routes can access the session functions
-app.use(session({
-  secret: process.env.SECRET_WORD!,
-  resave: false,
-  saveUninitialized: false,
-  proxy: true, // Required for Heroku & Digital Ocean (regarding X-Forwarded-For)
-  name: 'MyCoolWebAppCookieName', // This needs to be unique per-host.
+// // we initialize the session method before routes so that all routes can access the session functions
+// app.use(session({
+//   secret: process.env.SECRET_WORD!,
+//   resave: false,
+//   saveUninitialized: false,
+//   proxy: true, // Required for Heroku & Digital Ocean (regarding X-Forwarded-For)
+//   name: 'MyCoolWebAppCookieName', // This needs to be unique per-host.
 
-  cookie: {
-    // secure: true, // required for cookies to work on HTTPS
-    httpOnly: false,
-    sameSite: 'none',
+//   cookie: {
+//     // secure: true, // required for cookies to work on HTTPS
+//     httpOnly: false,
+//     sameSite: 'none',
 
-    maxAge: 60 * 60 * 1000,
-  },
-  rolling: true,
-  store: MongoStore.create({
-    mongoUrl: process.env.DATABASE
-  })
-}));
+//     maxAge: 60 * 60 * 1000,
+//   },
+//   rolling: true,
+//   store: MongoStore.create({
+//     mongoUrl: process.env.DATABASE
+//   })
+// }));
 
 
 // const corsOptions = {
@@ -95,7 +95,6 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 // end point middleware
 app.use((res, req, next) => {
   // next(Error("endpoint not found"));
-
   next(createHttpError(404, "endpoint not found"))
 });
 

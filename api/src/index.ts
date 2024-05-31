@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import app from "./app"
 
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 
 const DB: string | undefined = process.env.DATABASE;
 const connectDb = async (): Promise<void> => {
