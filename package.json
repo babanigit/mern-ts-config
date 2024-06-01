@@ -8,8 +8,8 @@
     "dev": "npm run serve --prefix ./api",
     "build": "npm install --prefix ./app && npm run build --prefix ./app && npm install",
     "build2": " npm run build --prefix ./app",
-    "start": "nodemon api/dist/index.js",
-    "start2": "npm start --prefix ./api",
+    "start2": "nodemon api/dist/index.js",
+    "start": "npm start --prefix ./api",
 
     "i": "npm install --prefix ./app && npm run build --prefix ./app && npm install && npm install ./api"
   },
