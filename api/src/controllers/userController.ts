@@ -139,16 +139,15 @@ export const getLogin = async (req: Request, res: Response, next: NextFunction) 
 
 export const getLogout: RequestHandler = (req, res, next) => {
 
-  // will destroy the session here....
-  req.session.destroy((error:any) => {
-    if (error) {
-      next(error)
-    } else {
-      res
-      .clearCookie("access_token")
-      .status(200)
-      .json({ message: "User Logged out successfully" });
-    }
-  })
+  try {
+    res.clearCookie("access_token").status(200).json({
+      success: true,
+      message: "User Logged out successfully",
+      statusCode: 200,
+    });
+  } catch (error) {
+    next(error);
+  }
+  
 }
 
