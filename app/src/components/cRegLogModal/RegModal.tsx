@@ -75,7 +75,7 @@ const RegModal = ({
                             name="userName"
 
                             label="Username"
-                            type="text"
+                            type="username"
                             placeholder="Username"
                             register={register}
                             registerOptions={{ required: "Required Username" }}
@@ -95,7 +95,7 @@ const RegModal = ({
                             name="passwd"
 
                             label="Password"
-                            type="text"
+                            type="password"
                             placeholder="Password"
                             register={register}
                             registerOptions={{ required: "Required Password" }}
@@ -115,7 +115,7 @@ const RegModal = ({
                             disabled={isSubmitting} // so u cant submit it twice
                             className={styleUtils.width100}
                         >
-                            Log In
+                            register
                         </Button>
 
                     </Form>

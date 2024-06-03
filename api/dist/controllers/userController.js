@@ -105,17 +105,15 @@ const getLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.getLogin = getLogin;
 const getLogout = (req, res, next) => {
-    // will destroy the session here....
-    req.session.destroy((error) => {
-        if (error) {
-            next(error);
-        }
-        else {
-            res
-                .clearCookie("access_token")
-                .status(200)
-                .json({ message: "User Logged out successfully" });
-        }
-    });
+    try {
+        res.clearCookie("access_token").status(200).json({
+            success: true,
+            message: "User Logged out successfully",
+            statusCode: 200,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
 };
 exports.getLogout = getLogout;

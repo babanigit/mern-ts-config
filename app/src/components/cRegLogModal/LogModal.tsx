@@ -70,7 +70,7 @@ const LogModal = ({ onDismiss, onLoginSuccessful }: LoginModelProps) => {
                         <TextInputField
                             name="userName"
                             label="Username"
-                            type="text"
+                            type="username"
                             placeholder="Username"
                             register={register}
                             registerOptions={{ required: "Required" }}
@@ -89,7 +89,7 @@ const LogModal = ({ onDismiss, onLoginSuccessful }: LoginModelProps) => {
                             type="submit"
                             disabled={isSubmitting}
                             className={styleUtils.width100}>
-                            Sign Up
+                            login
                         </Button>
                     </Form>
                 </Modal.Body>
