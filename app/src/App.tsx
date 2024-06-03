@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-
 import { useEffect, useState } from "react";
 
 import { Container } from "react-bootstrap";
 
-
-
 import { UserModel } from "./components/aModal/userModal";
 
-import * as NoteApi from "./components/aNetwork/note_api"
+import * as NoteApi from "./components/aNetwork/note_api";
 
 // import LoginModel from "../../components/RegisterModel/LoginModel";
 // import RegisterModel from "../../components/RegisterModel/RegisterModel";
@@ -25,11 +22,9 @@ import NotePage from "./pages/notesPage/NotePage";
 import PrivacyPage from "./pages/privacy/PrivacyPage";
 import NoteFoundPage from "./pages/NoteFoundPage";
 
-import styles from "./style/app.module.css"
-
+import styles from "./style/app.module.css";
 
 const App = () => {
-
   const [loggedInUser, setLoggedInUser] = useState<UserModel | null>(null);
 
   // to show Registration modal
@@ -38,28 +33,23 @@ const App = () => {
   // to show Login modal
   const [showLogModel, setShowLogModel] = useState(false);
 
-
   // getting the loggedInUser
   useEffect(() => {
-
     async function fetchLoggedInUser() {
       try {
         const user = await NoteApi.getLoggedInUser();
-        setLoggedInUser(user)
+        setLoggedInUser(user);
 
-        console.log(user)
-
+        console.log(user);
       } catch (error) {
         console.error(error);
       }
     }
     fetchLoggedInUser();
-  }, [])
-
+  }, []);
 
   return (
     <BrowserRouter>
-
       <NavBar
         loggedInUser={loggedInUser}
         onLoginClicked={() => setShowLogModel(true)}
@@ -67,45 +57,35 @@ const App = () => {
         onLogoutSuccessful={() => setLoggedInUser(null)}
       />
 
-      <Container className={ styles.pageContainer}>
+      <Container className={styles.pageContainer}>
         <Routes>
-          <Route
-            path="/"
-            element={<NotePage loggedInUser={loggedInUser} />}
-          />
-          <Route
-            path="/privacy"
-            element={<PrivacyPage />}
-          />
-          <Route
-            path="/*"
-            element={<NoteFoundPage />}
-          />
+          <Route path="/" element={<NotePage loggedInUser={loggedInUser} />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/*" element={<NoteFoundPage />} />
         </Routes>
-
       </Container>
 
-{/* show register  */}
-      {showRegModel &&
+      {/* show register  */}
+      {showRegModel && (
         <RegModal
           onDismiss={() => setShowRegModel(false)}
           onRegistrationSuccessful={(user) => {
             setLoggedInUser(user);
             setShowRegModel(false);
           }}
-        />}
+        />
+      )}
 
-{/* show login */}
-      {showLogModel &&
+      {/* show login */}
+      {showLogModel && (
         <LogModal
           onDismiss={() => setShowLogModel(false)}
           onLoginSuccessful={(user) => {
             setLoggedInUser(user);
             setShowLogModel(false);
           }}
-        />}
-
-
+        />
+      )}
     </BrowserRouter>
   );
 };

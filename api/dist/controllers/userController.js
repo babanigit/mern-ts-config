@@ -18,14 +18,14 @@ const userSchema_1 = __importDefault(require("../models/userSchema"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const http_errors_1 = __importDefault(require("http-errors"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const assertIsDefine_1 = require("../utils/assertIsDefine");
 const getAuthenticatedUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const userId = req.session.userId; // Access the userId directly from req.session
-        console.log("session Id ", userId);
-        console.log("session is ", req.session);
-        const user = yield userSchema_1.default.findById(userId).select("+email").exec();
-        console.log("getAuth from userController ", user);
-        res.status(200).json(user);
+        const getCookieAuth = req.cookies.access_token;
+        (0, assertIsDefine_1.assertIsDefine)("cookie", getCookieAuth);
+        // Type assertion to JwtPayload (haven't used yet)
+        const decoded = jsonwebtoken_1.default.verify(getCookieAuth, process.env.SECRET);
+        res.status(200).json(decoded.user);
     }
     catch (error) {
         next(error);
@@ -59,8 +59,8 @@ const getRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             id: user._id,
             user: user,
         }, process.env.SECRET_WORD);
-        // we sending user._id to the session.userId and we are creating cookie of it
-        req.session.userId = user._id;
+        // // we sending user._id to the session.userId and we are creating cookie of it
+        // req.session.userId = user._id;
         const expiryDate = new Date(Date.now() + 3600000); // 1 hour
         res
             .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
@@ -90,8 +90,8 @@ const getLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             id: user._id,
             user: user,
         }, process.env.SECRET_WORD);
-        // we sending user._id to the session.userId
-        req.session.userId = user._id;
+        // // we sending user._id to the session.userId
+        // req.session.userId = user._id;
         const expiryDate = new Date(Date.now() + 3600000); // 1 hour
         // const expiryDate = new Date(Date.now() + 30000); // 30 seconds
         res

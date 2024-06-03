@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import { error } from "console";
 import createHttpError from "http-errors";
 
-import jwt from "jsonwebtoken"
+import jwt,{JwtPayload} from "jsonwebtoken"
 
 import { assertIsDefine } from "../utils/assertIsDefine";
 
@@ -22,16 +22,17 @@ interface User extends Document {
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
 
   try {
-    const userId = req.session.userId; // Access the userId directly from req.session
+    const getCookieAuth = req.cookies.access_token;
 
-    console.log("session Id ", userId);
-    console.log("session is ", req.session);
+    assertIsDefine("cookie", getCookieAuth);
 
-    const user = await User.findById(userId).select("+email").exec();
+    // Type assertion to JwtPayload (haven't used yet)
+    const decoded = jwt.verify(
+      getCookieAuth,
+      process.env.SECRET!
+    ) as JwtPayload;
 
-    console.log("getAuth from userController ", user);
-
-    res.status(200).json(user);
+    res.status(200).json(decoded.user);
 
   } catch (error) {
     next(error)
@@ -75,8 +76,8 @@ export const getRegister = async (req: Request, res: Response, next: NextFunctio
       process.env.SECRET_WORD!
     );
 
-    // we sending user._id to the session.userId and we are creating cookie of it
-    req.session.userId = user._id;
+    // // we sending user._id to the session.userId and we are creating cookie of it
+    // req.session.userId = user._id;
 
     const expiryDate = new Date(Date.now() + 3600000); // 1 hour
     
@@ -120,8 +121,8 @@ export const getLogin = async (req: Request, res: Response, next: NextFunction) 
       process.env.SECRET_WORD!
     );
 
-    // we sending user._id to the session.userId
-    req.session.userId = user._id;
+    // // we sending user._id to the session.userId
+    // req.session.userId = user._id;
 
     const expiryDate = new Date(Date.now() + 3600000); // 1 hour
     // const expiryDate = new Date(Date.now() + 30000); // 30 seconds
